@@ -1,0 +1,42 @@
+[
+  {
+    "id": "docker",
+    "question": "How much have you used Docker before today?",
+    "options": [
+      { "id": "never", "label": "Never touched it" },
+      { "id": "tutorial", "label": "Followed a tutorial once" },
+      { "id": "projects", "label": "Use it in my projects" },
+      { "id": "prod", "label": "I ship containers to production" }
+    ]
+  },
+  {
+    "id": "cloud",
+    "question": "Which cloud have you deployed something to?",
+    "options": [
+      { "id": "none", "label": "None yet, this is my first" },
+      { "id": "gcp", "label": "Google Cloud" },
+      { "id": "other", "label": "Another cloud provider" },
+      { "id": "many", "label": "More than one" }
+    ]
+  },
+  {
+    "id": "fear",
+    "question": "What scares you most about the cloud?",
+    "options": [
+      { "id": "bill", "label": "A surprise bill" },
+      { "id": "config", "label": "All the configuration" },
+      { "id": "security", "label": "Getting hacked" },
+      { "id": "nothing", "label": "Nothing, let's go" }
+    ]
+  },
+  {
+    "id": "build",
+    "question": "What will you deploy to Cloud Run first?",
+    "options": [
+      { "id": "api", "label": "An API for my app" },
+      { "id": "site", "label": "A website or portfolio" },
+      { "id": "bot", "label": "A bot or automation" },
+      { "id": "ai", "label": "An AI-powered app" }
+    ]
+  }
+]

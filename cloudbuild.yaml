@@ -1,0 +1,64 @@
+# =====================================================================
+#  Cloud Build pipeline for PulseBoard
+#  Runs on every push to main (via the GitHub trigger):
+#    1. test  ->  2. build image  ->  3. push to Artifact Registry
+#    ->  4. deploy a new Cloud Run revision (traffic moves to it)
+# =====================================================================
+
+substitutions:
+  _REGION: europe-west1          # same region as the service and the registry
+  _SERVICE: pulseboard           # Cloud Run service name
+  _REPO: pulseboard              # Artifact Registry repository name
+  _RUNTIME_SA: pulseboard-run    # identity the running app uses
+
+steps:
+  # 1. Run the unit tests. If they fail, nothing gets deployed.
+  - id: test
+    name: node:24-slim
+    entrypoint: bash
+    args: ['-c', 'npm ci && npm test']
+
+  # 2. Build the container image from our Dockerfile.
+  #    Tag it with the build ID (unique) and "latest" (convenient).
+  - id: build
+    name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -t
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE}:$BUILD_ID
+      - -t
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE}:latest
+      - .
+
+  # 3. Push both tags to Artifact Registry.
+  - id: push
+    name: gcr.io/cloud-builders/docker
+    args: ['push', '--all-tags', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE}']
+
+  # 4. Deploy the exact image we just built. Cloud Run creates a new
+  #    revision and, once it passes its health check, sends it 100% of
+  #    traffic. Settings we don't mention (env vars, scaling limits,
+  #    public access) are kept from the previous revision.
+  - id: deploy
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - ${_SERVICE}
+      - --image=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE}:$BUILD_ID
+      - --region=${_REGION}
+      - --service-account=${_RUNTIME_SA}@$PROJECT_ID.iam.gserviceaccount.com
+      - --labels=managed-by=cloud-build,commit-sha=$SHORT_SHA
+      - --quiet
+
+# Record the image in the build's artifacts list.
+images:
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE}:$BUILD_ID
+
+options:
+  # Required when the build runs as a service account you chose
+  # (our trigger uses "pulseboard-deployer"). Logs go to Cloud Logging.
+  logging: CLOUD_LOGGING_ONLY
+
+timeout: 900s

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PulseBoard · Board</title>
+  <link rel="stylesheet" href="/app.css">
+</head>
+<body>
+  <div class="board" id="board">
+    <div>
+      <div class="brandbar"><span></span><span></span><span></span><span></span></div>
+      <div class="board-top">
+        <h1>PulseBoard</h1>
+        <div class="chips">
+          <span class="chip" id="chip-storage">…</span>
+          <span class="chip" id="chip-rev">…</span>
+          <span class="chip" id="chip-served"><i class="dot"></i><span>…</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="warning" id="warning"></div>
+
+    <div class="board-grid">
+      <section class="card">
+        <p class="eyebrow" id="poll-eyebrow">Live poll</p>
+        <h2 class="poll-title" id="poll-q">Loading…</h2>
+        <div class="bars" id="bars"></div>
+        <div class="poll-foot">
+          <span class="total" id="total">0 votes</span>
+          <span class="admin">
+            <button class="btn ghost" id="prev">◀ Prev</button>
+            <button class="btn" id="next">Next ▶</button>
+          </span>
+        </div>
+      </section>
+
+      <section class="card">
+        <p class="eyebrow">Top questions</p>
+        <ul class="qlist" id="questions"></ul>
+      </section>
+
+      <section class="card join">
+        <p class="eyebrow">Join from your phone</p>
+        <img src="/qr.svg" alt="QR code to join PulseBoard">
+        <div class="url" id="join-url"></div>
+        <div class="reactions" id="reactions"></div>
+      </section>
+    </div>
+
+    <footer class="infra">
+      <div>
+        <p class="eyebrow">Container instances</p>
+        <div class="instances" id="instances"></div>
+      </div>
+      <div class="infra-side">
+        <p class="eyebrow">Last 24 responses came from</p>
+        <div class="trail" id="trail"></div>
+        <div class="big" id="inst-count">0</div>
+      </div>
+    </footer>
+  </div>
+
+  <div class="floaters" id="floaters"></div>
+
+  <script src="/common.js"></script>
+  <script src="/board.js"></script>
+</body>
+</html>

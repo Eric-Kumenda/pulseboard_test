@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#4285f4">
+  <title>PulseBoard</title>
+  <link rel="stylesheet" href="/app.css">
+</head>
+<body>
+  <div class="brandbar"><span></span><span></span><span></span><span></span></div>
+
+  <main class="attendee">
+    <header>
+      <h1>PulseBoard</h1>
+      <span class="chip" id="storage-chip">connecting…</span>
+    </header>
+
+    <section class="card" aria-labelledby="poll-q">
+      <p class="eyebrow">Live poll</p>
+      <h2 id="poll-q">Loading…</h2>
+      <div class="options" id="options"></div>
+    </section>
+
+    <section class="card">
+      <p class="eyebrow">Ask the speaker</p>
+      <form class="ask" id="ask-form">
+        <textarea id="ask-text" maxlength="140" rows="2" placeholder="Type a question…" aria-label="Your question"></textarea>
+        <button class="btn" type="submit">Ask</button>
+      </form>
+      <div class="counter"><span id="ask-count">0</span>/140</div>
+      <ul class="qlist" id="questions"></ul>
+    </section>
+
+    <p class="servedby">
+      <span class="chip" id="served-chip"><i class="dot"></i><span>…</span></span>
+    </p>
+  </main>
+
+  <nav class="reactbar" id="reactbar" aria-label="Reactions"></nav>
+  <div class="toast" id="toast" role="status"></div>
+
+  <script src="/common.js"></script>
+  <script src="/attendee.js"></script>
+</body>
+</html>
