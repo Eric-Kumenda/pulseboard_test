@@ -3,10 +3,17 @@
 // the same way. Run with:  npm test
 // For v2 locally:  FIRESTORE_EMULATOR_HOST=localhost:8085 npm test
 
-const { test } = require('node:test');
+const nodeTest = require('node:test');
 const assert = require('node:assert/strict');
-const { createStore } = require('../src/store');
+const { createStore, KIND = 'memory' } = require('../src/store');
 const polls = require('../polls.json');
+
+// v2 needs a database. In CI (Cloud Build) and on laptops without the
+// emulator we skip, rather than touch the real production Firestore.
+const skip = KIND === 'firestore' && !process.env.FIRESTORE_EMULATOR_HOST
+  ? 'Firestore store: set FIRESTORE_EMULATOR_HOST to run these'
+  : false;
+const test = (name, fn) => nodeTest(name, { skip }, fn);
 
 const identity = { id: 'test01', revision: 'test-rev', startedAt: Date.now() };
 const voter = (n) => `voter-${n}-${Date.now().toString(16)}`;

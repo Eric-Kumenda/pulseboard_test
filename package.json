@@ -1,6 +1,6 @@
 {
   "name": "pulseboard",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Live polls, Q&A and reactions for a room full of people. A Cloud Run demo app that shows autoscaling, statelessness and cost control.",
   "main": "server.js",
   "private": true,
@@ -15,6 +15,7 @@
     "crowd": "node tools/crowd.js"
   },
   "dependencies": {
+    "@google-cloud/firestore": "^9.4.0",
     "express": "^5.1.0",
     "qrcode": "^1.5.4"
   }
