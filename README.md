@@ -15,7 +15,7 @@ and roll out a new version.
 
 ## Two versions, one lesson
 
-| | v1 (`main` at tag `v1`) | v2 (branch `v2`, tag `v2`) |
+| | v1 (`main` at tag `v1`) | v2 (branch `v2-firestore`, tag `v2`) |
 |---|---|---|
 | State lives in | Each container's memory | Firestore |
 | With 1 instance | Works | Works |
@@ -51,7 +51,7 @@ Everything runs from **Cloud Shell**. Each script is commented line by line.
 | 3 | `scripts/03-deploy-v1.sh` | `gcloud run deploy` with cost guardrails. Room joins, scaling, the bug |
 | 4 | `scripts/04-firestore.sh` | Firestore database + IAM for the runtime identity |
 | 5 | `scripts/05-cicd-trigger.sh` | Deployer identity, GitHub connection, trigger on `main` |
-| 6 | `git merge v2 && git push` | Trigger builds and deploys v2, replacing v1 |
+| 6 | `git merge v2-firestore && git push` | Trigger builds and deploys v2, replacing v1 |
 | 7 | `scripts/06-observe-and-rollback.sh` | Revisions, logs, canary, rollback |
 | 99 | `scripts/99-teardown.sh` | Stop all charges |
 
@@ -59,7 +59,7 @@ Everything runs from **Cloud Shell**. Each script is commented line by line.
 
 ```bash
 git checkout main
-git merge v2            # brings in the Firestore store
+git merge v2-firestore  # brings in the Firestore store
 git push origin main    # Cloud Build trigger fires
 ```
 
