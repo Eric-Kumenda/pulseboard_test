@@ -7,6 +7,7 @@
   let state = null;
 
   const $ = (id) => document.getElementById(id);
+  const pad = (n) => String(n).padStart(2, '0');
 
   function toast(msg) {
     const t = $('toast');
@@ -17,20 +18,22 @@
   }
 
   function renderPoll() {
-    const poll = state.polls.find((p) => p.id === state.activePollId) || state.polls[0];
+    const idx = Math.max(state.polls.findIndex((p) => p.id === state.activePollId), 0);
+    const poll = state.polls[idx];
     const counts = state.counts[poll.id] || {};
     const total = Object.values(counts).reduce((a, b) => a + b, 0);
     const mine = myVotes[poll.id];
 
+    $('poll-eyebrow').textContent = `Live poll · ${pad(idx + 1)} of ${pad(state.polls.length)}`;
     $('poll-q').textContent = poll.question;
     $('options').innerHTML = poll.options.map((o, i) => {
       const n = counts[o.id] || 0;
       const pct = total ? Math.round((n / total) * 100) : 0;
-      const color = PB.BAR_COLORS[i % PB.BAR_COLORS.length];
       return `
         <button class="option ${mine === o.id ? 'mine' : ''}" data-poll="${poll.id}" data-option="${o.id}">
-          <i class="fill" style="width:${mine ? pct : 0}%;background:${color}33"></i>
-          <span>${PB.esc(o.label)}</span>
+          <i class="fill" style="width:${mine ? pct : 0}%"></i>
+          <span class="n">${pad(i + 1)}</span>
+          <span class="label">${PB.esc(o.label)}</span>
           <span class="pct">${mine ? pct + '%' : ''}</span>
         </button>`;
     }).join('');
@@ -39,8 +42,9 @@
   function renderQuestions() {
     const list = state.questions.slice(0, 15);
     $('questions').innerHTML = list.length
-      ? list.map((q) => `
-          <li class="qitem">
+      ? list.map((q, i) => `
+          <li class="qitem ${i === 0 ? 'top' : ''}">
+            <span class="num">${pad(i + 1)}</span>
             <p>${PB.esc(q.text)}</p>
             <button class="upvote ${myUpvotes.has(q.id) ? 'done' : ''}" data-q="${q.id}"
               aria-label="Upvote">▲ ${q.votes}</button>

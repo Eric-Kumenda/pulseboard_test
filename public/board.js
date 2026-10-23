@@ -3,6 +3,7 @@
 
 (() => {
   const $ = (id) => document.getElementById(id);
+  const pad = (n) => String(n).padStart(2, '0');
   const POLL_MS = 1500;
   const STALE_MS = 30000;
 
@@ -21,45 +22,61 @@
   let lastReactions = null;
   let state = null;
 
-  $('join-url').textContent = location.host;
+  // "pulseboard-abc123.europe-west1.run.app" -> bold service name, light rest
+  const host = location.host;
+  const dot = host.indexOf('.');
+  $('join-url').innerHTML = dot > 0
+    ? `<b>${PB.esc(host.slice(0, dot))}</b>${PB.esc(host.slice(dot))}`
+    : `<b>${PB.esc(host)}</b>`;
 
   function renderPoll() {
-    const idx = state.polls.findIndex((p) => p.id === state.activePollId);
-    const poll = state.polls[Math.max(idx, 0)];
+    const idx = Math.max(state.polls.findIndex((p) => p.id === state.activePollId), 0);
+    const poll = state.polls[idx];
     const counts = state.counts[poll.id] || {};
     const total = Object.values(counts).reduce((a, b) => a + b, 0);
     const max = Math.max(1, ...Object.values(counts));
 
-    $('poll-eyebrow').textContent = `Live poll ${Math.max(idx, 0) + 1} of ${state.polls.length}`;
+    // Rank options by votes so the leader always gets the strongest orange.
+    const rank = [...poll.options]
+      .sort((a, b) => (counts[b.id] || 0) - (counts[a.id] || 0))
+      .map((o) => o.id);
+
+    $('poll-eyebrow').textContent = `Live poll · ${pad(idx + 1)} of ${pad(state.polls.length)}`;
     $('poll-q').textContent = poll.question;
-    $('total').textContent = `${total} vote${total === 1 ? '' : 's'}`;
+    $('total').textContent = `${total} vote${total === 1 ? '' : 's'} so far`;
+    $('stat-votes').textContent = total;
+    $('stat-q').textContent = state.questions.length;
 
     const bars = $('bars');
     if (bars.dataset.poll !== poll.id) {
       bars.dataset.poll = poll.id;
       bars.innerHTML = poll.options.map((o, i) => `
         <div class="bar-row" data-o="${o.id}">
+          <span class="bar-n">${pad(i + 1)}</span>
           <span class="bar-label">${PB.esc(o.label)}</span>
           <span class="bar-num">0</span>
-          <div class="bar-track"><div class="bar-fill" style="background:${PB.BAR_COLORS[i % PB.BAR_COLORS.length]}"></div></div>
+          <div class="bar-track"><div class="bar-fill"></div></div>
         </div>`).join('');
     }
     for (const o of poll.options) {
       const row = bars.querySelector(`[data-o="${o.id}"]`);
       const n = counts[o.id] || 0;
       const pct = total ? Math.round((n / total) * 100) : 0;
-      row.querySelector('.bar-num').textContent = `${n} · ${pct}%`;
-      row.querySelector('.bar-fill').style.width = `${(n / max) * 100}%`;
+      row.querySelector('.bar-num').innerHTML = `${n}<small>${pct}%</small>`;
+      const fill = row.querySelector('.bar-fill');
+      fill.style.width = `${(n / max) * 100}%`;
+      fill.style.background = PB.BAR_COLORS[rank.indexOf(o.id) % PB.BAR_COLORS.length];
     }
   }
 
   function renderQuestions() {
-    const list = state.questions.slice(0, 7);
+    const list = state.questions.slice(0, 6);
     $('questions').innerHTML = list.length
-      ? list.map((q) => `
-          <li class="qitem">
-            <span class="qvotes">▲ ${q.votes}</span>
+      ? list.map((q, i) => `
+          <li class="qitem ${i === 0 ? 'top' : ''}">
+            <span class="num">${pad(i + 1)}</span>
             <p>${PB.esc(q.text)}</p>
+            <span class="qvotes">▲ ${q.votes}</span>
             <button class="hide-q" data-q="${q.id}" title="Hide">✕</button>
           </li>`).join('')
       : '<li class="empty">Questions from the room show up here.</li>';
@@ -126,26 +143,29 @@
       knownTiles.add(t.id);
       const stale = now - t.lastSeen >= STALE_MS;
       return `
-        <div class="inst ${t.id === s.instance ? 'current' : ''} ${stale ? 'stale' : ''} ${isNew ? 'new' : ''}"
-             style="background:${PB.instanceColor(t.id)}">
-          <b>${PB.esc(t.id)}</b>
-          <small>rev ${PB.esc(PB.shortRevision(t.revision))}${t.requests != null ? ' · ' + t.requests + ' req' : ''}</small>
+        <div class="inst ${t.id === s.instance ? 'current' : ''} ${stale ? 'stale' : ''} ${isNew ? 'new' : ''}">
+          <i style="background:${PB.instanceColor(t.id)}"></i>
+          <div>
+            <b>${PB.esc(t.id)}</b>
+            <small>rev ${PB.esc(PB.shortRevision(t.revision))}${t.requests != null ? ' · ' + t.requests + ' req' : ''}</small>
+          </div>
         </div>`;
     }).join('');
 
     $('trail').innerHTML = trail
       .map((id) => `<i title="${PB.esc(id)}" style="background:${PB.instanceColor(id)}"></i>`)
       .join('');
-    $('inst-count').textContent = `${live.length} live`;
+    $('inst-count').innerHTML = `<b>${live.length}</b> live`;
+    $('stat-inst').textContent = live.length;
 
     // The v1 lesson, spelled out on screen.
     const distinct = new Set(trail).size;
     const warn = $('warning');
     if (state.app.storage === 'memory' && distinct > 1) {
       warn.innerHTML =
-        `<b>Heads up:</b> this screen is talking to <b>${distinct} instances</b>, and each one keeps ` +
+        `<span class="ico">!</span><span>This screen is talking to <b>${distinct} instances</b>, and each one keeps ` +
         `its own votes in memory. The totals change depending on which instance answers. ` +
-        `That is why Cloud Run apps must be <b>stateless</b>.`;
+        `That is why Cloud Run apps must be <b>stateless</b>.</span>`;
       warn.classList.add('show');
     } else {
       warn.classList.remove('show');
