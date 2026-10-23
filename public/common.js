@@ -5,14 +5,16 @@ const PB = (() => {
     fire: '🔥',
     clap: '👏',
     rocket: '🚀',
-    heart: '💙',
+    heart: '🧡',
     laugh: '😂',
   };
 
-  const BAR_COLORS = ['#4285f4', '#ea4335', '#fbbc04', '#34a853', '#57caff', '#ff7daf'];
+  // Orange family, darkest first: the leading option reads strongest.
+  const BAR_COLORS = ['#ff6a13', '#ff8a3d', '#ffae73', '#f2c4a0', '#e0a77f', '#c9875c'];
+  // Warm, clearly different swatches so instances are easy to tell apart.
   const INSTANCE_COLORS = [
-    '#c3ecf6', '#f8d8d8', '#ffe7a5', '#ccf6c5',
-    '#57caff', '#ff7daf', '#ffd427', '#5cdb6d',
+    '#ff6a13', '#ffb36b', '#c2410c', '#f4a259',
+    '#8c5a3c', '#ffd2ad', '#e76f51', '#3a3734',
   ];
 
   // localStorage can be blocked (private mode), so every access is guarded.

@@ -151,7 +151,7 @@ async function main() {
       const svg = await QRCode.toString(url, {
         type: 'svg',
         margin: 1,
-        color: { dark: '#1e1e1e', light: '#ffffff' },
+        color: { dark: '#161616', light: '#ffffff' },
       });
       res.type('image/svg+xml').set('Cache-Control', 'public, max-age=300').send(svg);
     } catch (err) {

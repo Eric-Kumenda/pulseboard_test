@@ -8,48 +8,72 @@
 </head>
 <body>
   <div class="board" id="board">
-    <div>
-      <div class="brandbar"><span></span><span></span><span></span><span></span></div>
-      <div class="board-top">
-        <h1>PulseBoard</h1>
-        <div class="chips">
-          <span class="chip" id="chip-storage">…</span>
-          <span class="chip" id="chip-rev">…</span>
-          <span class="chip" id="chip-served"><i class="dot"></i><span>…</span></span>
-        </div>
+    <div class="glow" aria-hidden="true"></div>
+
+    <div class="topbar">
+      <span class="logo"><i class="logo-mark"></i>PulseBoard</span>
+      <div class="chips">
+        <span class="chip" id="chip-storage">…</span>
+        <span class="chip" id="chip-rev">…</span>
+        <span class="chip" id="chip-served"><i class="dot"></i><span>…</span></span>
       </div>
+      <a class="btn" href="/" target="_blank" rel="noopener">Phone view →</a>
     </div>
 
     <div class="warning" id="warning"></div>
 
-    <div class="board-grid">
-      <section class="card">
-        <p class="eyebrow" id="poll-eyebrow">Live poll</p>
-        <h2 class="poll-title" id="poll-q">Loading…</h2>
+    <main class="board-main">
+      <section class="poll">
+        <div class="poll-head">
+          <div>
+            <p class="eyebrow" id="poll-eyebrow">Live poll</p>
+            <h1 class="poll-title" id="poll-q">Loading…</h1>
+          </div>
+          <div class="stats">
+            <div class="stat"><b id="stat-votes">0</b><span>Votes</span></div>
+            <div class="stat"><b id="stat-q">0</b><span>Questions</span></div>
+            <div class="stat"><b id="stat-inst">0</b><span>Instances</span></div>
+          </div>
+        </div>
+        <div class="rule" id="rule">results update live</div>
         <div class="bars" id="bars"></div>
         <div class="poll-foot">
           <span class="total" id="total">0 votes</span>
           <span class="admin">
-            <button class="btn ghost" id="prev">◀ Prev</button>
-            <button class="btn" id="next">Next ▶</button>
+            <button class="btn ghost" id="prev">← Prev</button>
+            <button class="btn" id="next">Next →</button>
           </span>
         </div>
       </section>
 
-      <section class="card">
-        <p class="eyebrow">Top questions</p>
-        <ul class="qlist" id="questions"></ul>
+      <section class="side">
+        <div class="card join">
+          <img src="/qr.svg" alt="QR code to join PulseBoard">
+          <div>
+            <p class="eyebrow">Join from your phone</p>
+            <div class="url" id="join-url"></div>
+          </div>
+          <div class="spin-badge" aria-hidden="true">
+            <svg viewBox="0 0 120 120">
+              <defs><path id="circ" d="M60,60 m-44,0 a44,44 0 1,1 88,0 a44,44 0 1,1 -88,0"/></defs>
+              <text><textPath href="#circ">scan to join · scan to join ·</textPath></text>
+            </svg>
+            <div class="arrow"><span>↓</span></div>
+          </div>
+        </div>
+        <div class="card questions">
+          <p class="eyebrow">From the room</p>
+          <h3>Top <b>questions</b></h3>
+          <ul class="qlist" id="questions"></ul>
+        </div>
       </section>
+    </main>
 
-      <section class="card join">
-        <p class="eyebrow">Join from your phone</p>
-        <img src="/qr.svg" alt="QR code to join PulseBoard">
-        <div class="url" id="join-url"></div>
+    <footer class="footer">
+      <div>
+        <p class="eyebrow">Reactions</p>
         <div class="reactions" id="reactions"></div>
-      </section>
-    </div>
-
-    <footer class="infra">
+      </div>
       <div>
         <p class="eyebrow">Container instances</p>
         <div class="instances" id="instances"></div>
@@ -57,7 +81,7 @@
       <div class="infra-side">
         <p class="eyebrow">Last 24 responses came from</p>
         <div class="trail" id="trail"></div>
-        <div class="big" id="inst-count">0</div>
+        <div class="big" id="inst-count"><b>0</b> live</div>
       </div>
     </footer>
   </div>
